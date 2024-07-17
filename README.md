@@ -4,6 +4,29 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
 
+## Setting Up Environment Variables
+
+To configure the environment variables for this project, you will need to create a `.env` file in the root directory of the project. This file will store sensitive information such as API keys, database credentials, and other configuration details that should not be hardcoded into your source code.
+
+### Steps to Create and Complete the `.env` File
+
+1. **Create the `.env` File**: In the root directory of your project, create a new file named `.env`.
+
+2. **Add Environment Variables**: Open the `.env` file and add the necessary environment variables. Each variable should be on a new line in the format `KEY=VALUE`. Below is an example of what your `.env` file might look like:
+
+```plaintext
+# API variables from https://rapidapi.com/dpventures/api/wordsapi or other
+WORDSAPI_URL=wordsapiv1.p.rapidapi.com
+WORDSAPI_KEY=your key
+
+#DB Config
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+
+# Other configuration
+DEBUG=true
+```
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
@@ -12,7 +35,7 @@ You can run your application in dev mode that enables live coding using:
 ./mvnw compile quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+> **_NOTE:_** Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
 
 ## Packaging and running the application
 
