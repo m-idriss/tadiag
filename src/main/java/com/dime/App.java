@@ -34,12 +34,15 @@ public class App {
 
         String domain = protocol + "://" + listeningOn;
 
-        String healthPath = config.getOptionalValue("quarkus.smallrye-health.root-path", String.class)
-                .orElse("/q/health");
+        String healthPath = domain + config.getOptionalValue("quarkus.smallrye-health.ui.root-path", String.class)
+                .orElse("/health-ui");
 
         // get dev ui path or /q/dev
-        String devUiPath = config.getOptionalValue("quarkus.smallrye-openapi.root-path", String.class)
-                .orElse("/q/dev");
+        String devUiPath = domain + config.getOptionalValue("quarkus.smallrye-openapi.root-path", String.class)
+                .orElse("/dev-ui");
+
+        String sawggerPath = domain + config.getOptionalValue("quarkus.swagger-ui.path", String.class)
+                .orElse("/swagger-ui");
 
         Log.infof(
                 "\n" +
@@ -49,12 +52,12 @@ public class App {
                         "\n|   | - Profiles \t: %s " +
                         "\n|   | - Version \t: %s " +
                         "\n|   | - Listening on \t: %s " +
-                        "\n|   | - Swagger UI \t: %s/swagger-ui/ " +
-                        "\n|   | - Health UI \t: %s%s " +
-                        "\n|   | - Dev UI \t\t: %s%s " +
+                        "\n|   | - Api, Swagger UI : %s " +
+                        "\n|   | - Health UI \t: %s " +
+                        "\n|   | - Dev UI \t\t: %s " +
                         "\n|   | " +
                         "\n+---+-------------------------------[ Enjoy ]---------------------------------",
-                appName, profile, version, domain, domain, domain, healthPath, domain, devUiPath);
+                appName, profile, version, domain, sawggerPath, healthPath, devUiPath);
     }
 
     void onStop(@Observes ShutdownEvent ev) {
