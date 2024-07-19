@@ -39,8 +39,4 @@ public class TermRecord {
         this.synonyms = synonyms;
     }
 
-    @Override
-    public String toString() {
-        return "TermRecord [id=" + id + ", word=" + word + ", synonyms=" + synonyms + "]";
-    }
 }
