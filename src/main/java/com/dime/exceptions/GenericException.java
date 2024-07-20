@@ -8,13 +8,11 @@ public class GenericException extends RuntimeException {
     private final transient GenericErrorResponse errorResponse;
     private final transient Map<String, Object> messageArguments;
 
-    // Constructeur qui initialise tous les champs
     public GenericException(GenericErrorResponse errorResponse, Map<String, Object> messageArguments) {
         this.errorResponse = errorResponse;
         this.messageArguments = messageArguments;
     }
 
-    // Getters pour les champs
     public GenericErrorResponse getErrorResponse() {
         return errorResponse;
     }
