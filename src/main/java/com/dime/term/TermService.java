@@ -37,6 +37,21 @@ public class TermService {
     }
 
     /*
+     * This method returns a term by its id
+     */
+
+    public Optional<Term> findById(Long id) {
+        return Optional.ofNullable(termRepository.findById(id));
+    }
+
+    /*
+     * This method returns a term by its word
+     */
+    public Optional<Term> findByWord(String word) {
+        return Optional.ofNullable(termRepository.findByWord(word));
+    }
+
+    /*
      * This method is annotated with @Transactional to ensure that the transaction
      * is open during the entire method execution. This is necessary because the
      * method calls two different repositories. The method first checks if the term
