@@ -46,7 +46,7 @@ public class TermResource {
     @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
     @RestLink(rel = "self-by-word")
     @InjectRestLinks(RestLinkType.INSTANCE)
-    public HalEntityWrapper<TermRecord> getTerm(@PathParam("word") String word) {
+    public HalEntityWrapper<TermRecord> getTermByWord(@PathParam("word") String word) {
         String wordLower = word.toLowerCase();
         Term entity = termService.getTerm(wordLower)
                 .orElseThrow(() -> GenericError.WORD_NOT_FOUND.exWithArguments(Map.of("word", wordLower)));
@@ -72,7 +72,7 @@ public class TermResource {
     @GET
     @RestLink(rel = "list")
     @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
-    public HalCollectionWrapper<TermRecord> listTerms() {
+    public HalCollectionWrapper<TermRecord> listAllTerms() {
         List<Term> terms = termService.listAll();
         List<TermRecord> termRecords = terms.stream().map(termMapper::toRecord).toList();
         return halService.toHalCollectionWrapper(termRecords, "terms", TermRecord.class);

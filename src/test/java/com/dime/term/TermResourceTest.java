@@ -16,7 +16,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 class TermResourceTest {
     @Test
-    void testGetbyWordEndpoint() {
+    void testGetTermByWord() {
         given()
                 .when().get("api/v1/terms/health")
                 .then()
@@ -36,7 +36,7 @@ class TermResourceTest {
     }
 
     @Test
-    void testEmptyListAllEndpoint() {
+    void testListAllTerms() {
         given()
                 .when().get("api/v1/terms")
                 .then()
