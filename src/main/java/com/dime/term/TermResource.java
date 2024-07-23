@@ -88,7 +88,7 @@ public class TermResource {
     public Response deleteTerm(String word) {
         String wordLower = word.toLowerCase();
         return termService.deleteByWord(wordLower)
-                .map(deleted -> Response.ok().build())
+                .map(deleted -> Response.noContent().build())
                 .orElseThrow(() -> GenericError.WORD_NOT_FOUND.exWithArguments(Map.of("word", wordLower)));
     }
 
