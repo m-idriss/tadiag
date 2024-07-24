@@ -15,53 +15,65 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class TermResourceTest {
 
-    @Test
-    public void testGetTermByWord() {
-        given()
-                .when().get("api/v1/terms/health")
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(1))
-                .body("word", equalTo("health"))
-                .body("synonyms", hasSize(1))
-                .body("synonyms", hasItem("wellness"))
-                .body("_links", allOf(
-                        hasKey("self-by-word"),
-                        hasKey("self"),
-                        hasKey("list")))
-                .body("_links.self-by-word.href", matchesPattern("http://[^/]+/api/v1/terms/health"))
-                .body("_links.self.href", matchesPattern("http://[^/]+/api/v1/terms/1"))
-                .body("_links.list.href", matchesPattern("http://[^/]+/api/v1/terms"));
-    }
+  @Test
+  public void testGetTermByWord() {
 
-    @Test
-    public void testListAllTermsWithTwoTerms() {
-        given()
-                .when().get("api/v1/terms/health").then().statusCode(200);
-        given()
-                .when().get("api/v1/terms/TRY").then().statusCode(200);
+    int healthId = given()
+        .when().get("api/v1/terms/health")
+        .then()
+        .statusCode(200).extract().path("id");
 
-        given()
-                .when().get("api/v1/terms/Test").then().statusCode(200);
+    given()
+        .when().get("api/v1/terms/health")
+        .then()
+        .statusCode(200)
+        .body("id", equalTo(healthId))
+        .body("word", equalTo("health"))
+        .body("synonyms", hasSize(1))
+        .body("synonyms", hasItem("wellness"))
+        .body("_links", allOf(
+            hasKey("self-by-word"),
+            hasKey("self"),
+            hasKey("list")))
+        .body("_links.self-by-word.href", matchesPattern("http://[^/]+/api/v1/terms/health"))
+        .body("_links.self.href", matchesPattern("http://[^/]+/api/v1/terms/" + healthId))
+        .body("_links.list.href", matchesPattern("http://[^/]+/api/v1/terms"));
+  }
 
-        given()
-                .when().get("api/v1/terms")
-                .then()
-                .statusCode(200)
-                .body("_embedded", hasKey("terms"))
-                .body("_embedded.terms", hasSize(3))
-                .body("_embedded.terms[0].id", equalTo(1))
-                .body("_embedded.terms[0].word", equalTo("health"))
-                .body("_embedded.terms[0].synonyms", hasSize(1))
-                .body("_embedded.terms[0].synonyms", hasItem("wellness"))
-                .body("_embedded.terms[1].id", equalTo(2))
-                .body("_embedded.terms[1].word", equalTo("try"))
-                .body("_embedded.terms[1].synonyms", hasSize(20))
-                .body("_embedded.terms[1].synonyms", hasItem("test"))
-                .body("_embedded.terms[2].id", equalTo(3))
-                .body("_embedded.terms[2].word", equalTo("test"))
-                .body("_embedded.terms[2].synonyms", hasSize(16))
-                .body("_embedded.terms[2].synonyms", hasItem("run"))
-                .body("_links.list.href", matchesPattern("http://[^/]+/api/v1/terms"));
-    }
+  @Test
+  public void testListAllTermsWithTwoTerms() {
+
+    int healthId = given().when().get("api/v1/terms/health").then().statusCode(200).extract().path("id");
+    int tryId = given().when().get("api/v1/terms/TRY").then().statusCode(200).extract().path("id");
+    int testId = given().when().get("api/v1/terms/Test").then().statusCode(200).extract().path("id");
+
+    given()
+        .when().get("api/v1/terms")
+        .then()
+        .statusCode(200)
+        .body("_embedded", hasKey("terms"))
+        .body("_embedded.terms", hasSize(3))
+        .body("_embedded.terms[0].id", equalTo(healthId))
+        .body("_embedded.terms[0].word", equalTo("health"))
+        .body("_embedded.terms[0].synonyms", hasSize(1))
+        .body("_embedded.terms[0].synonyms", hasItem("wellness"))
+        .body("_embedded.terms[0]._links.self-by-word.href", matchesPattern("http://[^/]+/api/v1/terms/health"))
+        .body("_embedded.terms[0]._links.self.href", matchesPattern("http://[^/]+/api/v1/terms/" + healthId))
+        .body("_embedded.terms[0]._links.list.href", matchesPattern("http://[^/]+/api/v1/terms"))
+        .body("_embedded.terms[1].id", equalTo(tryId))
+        .body("_embedded.terms[1].word", equalTo("try"))
+        .body("_embedded.terms[1].synonyms", hasSize(20))
+        .body("_embedded.terms[1].synonyms", hasItem("test"))
+        .body("_embedded.terms[1]._links.self-by-word.href", matchesPattern("http://[^/]+/api/v1/terms/try"))
+        .body("_embedded.terms[1]._links.self.href", matchesPattern("http://[^/]+/api/v1/terms/" + tryId))
+        .body("_embedded.terms[1]._links.list.href", matchesPattern("http://[^/]+/api/v1/terms"))
+        .body("_embedded.terms[2].id", equalTo(testId))
+        .body("_embedded.terms[2].word", equalTo("test"))
+        .body("_embedded.terms[2].synonyms", hasSize(16))
+        .body("_embedded.terms[2].synonyms", hasItem("run"))
+        .body("_embedded.terms[2]._links.self-by-word.href", matchesPattern("http://[^/]+/api/v1/terms/test"))
+        .body("_embedded.terms[2]._links.self.href", matchesPattern("http://[^/]+/api/v1/terms/" + testId))
+        .body("_embedded.terms[2]._links.list.href", matchesPattern("http://[^/]+/api/v1/terms"))
+        .body("_links.list.href", matchesPattern("http://[^/]+/api/v1/terms"));
+  }
 }
