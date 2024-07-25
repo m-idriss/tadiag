@@ -2,7 +2,6 @@ package com.dime.exceptions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -13,15 +12,13 @@ import io.quarkus.test.junit.QuarkusTest;
 class GenericExceptionTest {
 
     @Test
-    void testGetMessage_with_arguments() {
-        GenericErrorResponse errorResponse = GenericError.TERM_NOT_FOUND;
-        Map<String, Object> messageArguments = new HashMap<>();
-        messageArguments.put("id", 45);
+    void test_getMessage_with_arguments() {
+        GenericException result = GenericError.TERM_NOT_FOUND.exWithArguments(Map.of("id", 45));
 
-        GenericException genericException = new GenericException(errorResponse, messageArguments);
-
-        String result = genericException.getMessage();
-
-        assertEquals("Term with id [45] not found", result);
+        assertEquals(GenericError.TERM_NOT_FOUND, result.getErrorResponse());
+        assertEquals("Term with id [45] not found", result.getMessage());
+        Map<String, Object> arguments = result.getMessageArguments();
+        assertEquals(1, arguments.size());
+        assertEquals(45, arguments.get("id"));
     }
 }
