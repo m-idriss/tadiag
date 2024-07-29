@@ -46,6 +46,7 @@ public class TermResource {
     @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
     @RestLink(rel = "self-by-word")
     @InjectRestLinks(RestLinkType.INSTANCE)
+    @Operation(summary = "Get term by word")
     public HalEntityWrapper<TermRecord> getTermByWord(@PathParam("word") String word) {
         String wordLower = word.toLowerCase();
         Term entity = termService.getTerm(wordLower)
@@ -59,6 +60,7 @@ public class TermResource {
     @RestLink(rel = "self")
     @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
     @InjectRestLinks(RestLinkType.INSTANCE)
+    @Operation(summary = "Get term by id")
     public HalEntityWrapper<TermRecord> getTermById(@PathParam("id") int id) {
         Term entity = termService.findById(Long.valueOf(id)).get();
 
@@ -72,6 +74,7 @@ public class TermResource {
     @GET
     @RestLink(rel = "list")
     @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
+    @Operation(summary = "List all terms")
     public HalCollectionWrapper<TermRecord> listAllTerms() {
         List<Term> terms = termService.listAll();
         List<TermRecord> termRecords = terms.stream().map(termMapper::toRecord).toList();
@@ -84,7 +87,7 @@ public class TermResource {
     @DELETE
     @Path("/{word}")
     @Transactional
-    @Operation(description = "Delete term by word")
+    @Operation(summary = "Delete term by word")
     public Response deleteTerm(String word) {
         String wordLower = word.toLowerCase();
         return termService.deleteByWord(wordLower)
