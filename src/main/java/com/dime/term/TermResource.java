@@ -43,14 +43,13 @@ public class TermResource {
      */
     @GET
     @Path("{word: [a-zA-Z]+}")
-    @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
     @RestLink(rel = "self-by-word")
+    @Produces({ MediaType.APPLICATION_JSON, RestMediaType.APPLICATION_HAL_JSON })
     @InjectRestLinks(RestLinkType.INSTANCE)
     @Operation(summary = "Get term by word")
     public HalEntityWrapper<TermRecord> getTermByWord(@PathParam("word") String word) {
         String wordLower = word.toLowerCase();
-        Term entity = termService.getTerm(wordLower)
-                .orElseThrow(() -> GenericError.WORD_NOT_FOUND.exWithArguments(Map.of("word", wordLower)));
+        Term entity = termService.getTerm(wordLower).get();
         HalEntityWrapper<TermRecord> halEntity = halService.toHalWrapper(termMapper.toRecord(entity));
         return halEntity;
     }
@@ -62,8 +61,8 @@ public class TermResource {
     @InjectRestLinks(RestLinkType.INSTANCE)
     @Operation(summary = "Get term by id")
     public HalEntityWrapper<TermRecord> getTermById(@PathParam("id") int id) {
-        Term entity = termService.findById(Long.valueOf(id)).get();
-
+        Term entity = termService.findById(Long.valueOf(id))
+                .orElseThrow(() -> GenericError.TERM_NOT_FOUND.exWithArguments(Map.of("id", id)));
         HalEntityWrapper<TermRecord> halEntity = halService.toHalWrapper(termMapper.toRecord(entity));
         return halEntity;
     }
@@ -91,8 +90,7 @@ public class TermResource {
     public Response deleteTerm(String word) {
         String wordLower = word.toLowerCase();
         return termService.deleteByWord(wordLower)
-                .map(deleted -> Response.noContent().build())
-                .orElseThrow(() -> GenericError.WORD_NOT_FOUND.exWithArguments(Map.of("word", wordLower)));
+                .map(deleted -> Response.noContent().build()).get();
     }
 
 }

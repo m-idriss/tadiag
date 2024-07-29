@@ -1,6 +1,7 @@
 package com.dime.exceptions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 
@@ -20,5 +21,25 @@ class GenericExceptionTest {
         Map<String, Object> arguments = result.getMessageArguments();
         assertEquals(1, arguments.size());
         assertEquals(45, arguments.get("id"));
+    }
+
+    @Test
+    void test_getMessage_without_arguments() {
+        GenericException result = GenericError.INTERNAL_SERVER_ERROR.exWithArguments(Map.of());
+
+        assertEquals(GenericError.INTERNAL_SERVER_ERROR, result.getErrorResponse());
+        assertEquals("Internal Server Error", result.getMessage());
+        Map<String, Object> arguments = result.getMessageArguments();
+        assertEquals(0, arguments.size());
+    }
+
+    @Test
+    void test_getMessage_with_null_arguments() {
+        GenericException result = GenericError.TERM_CONFLICTS.exWithArguments(null);
+
+        assertEquals(GenericError.TERM_CONFLICTS, result.getErrorResponse());
+        assertEquals("Conflict", result.getMessage());
+        Map<String, Object> arguments = result.getMessageArguments();
+        assertNull(arguments);
     }
 }

@@ -48,6 +48,32 @@ public class TermResourceTest {
   }
 
   @Test
+  public void testGetTermByIdNotFound() {
+
+    given()
+        .when().get(TERMS_ENDPOINT + "/0")
+        .then()
+        .statusCode(404)
+        .body("status", equalTo(404))
+        .body("message", equalTo("Term with id [0] not found"))
+        .body("errorKey", equalTo("ID_NOT_FOUND"))
+        .body("path", matchesPattern(DOMAIN + TERMS_ENDPOINT + "/0"));
+  }
+
+  @Test
+  public void testGetTermByWordNotFound() {
+
+    given()
+        .when().get(TERMS_ENDPOINT + "/fofo")
+        .then()
+        .statusCode(404)
+        .body("status", equalTo(404))
+        .body("message", equalTo("Not Found"))
+        .body("errorKey", equalTo("WORD_NOT_FOUND"))
+        .body("path", matchesPattern(DOMAIN + TERMS_ENDPOINT + "/fofo"));
+  }
+
+  @Test
   public void testGetTermByWord() {
 
     int healthId = given()
@@ -107,5 +133,30 @@ public class TermResourceTest {
         .body("_embedded.terms[2]._links.self.href", matchesPattern(DOMAIN + TERMS_ENDPOINT + "/" + testId))
         .body("_embedded.terms[2]._links.list.href", matchesPattern(DOMAIN + TERMS_ENDPOINT))
         .body("_links.list.href", matchesPattern(DOMAIN + TERMS_ENDPOINT));
+  }
+
+  @Test
+  public void testDeleteByWord() {
+
+    int healthId = given().when().get(TERMS_ENDPOINT + "/health").then().statusCode(200).extract().path("id");
+
+    given()
+        .when().delete(TERMS_ENDPOINT + "/health")
+        .then()
+        .statusCode(204);
+
+    given()
+        .when().get(TERMS_ENDPOINT + "/" + healthId)
+        .then()
+        .statusCode(404);
+  }
+
+  @Test
+  public void testDeleteByWordNotFound() {
+
+    given()
+        .when().delete(TERMS_ENDPOINT + "/fofo")
+        .then()
+        .statusCode(204);
   }
 }
