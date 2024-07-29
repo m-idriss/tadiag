@@ -3,6 +3,7 @@ package com.dime;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -38,6 +39,14 @@ class StaticContentTest {
             Assertions.assertTrue(bytes.length > 0);
         }
         try (InputStream in = biglogoUrl.openStream()) {
+            byte[] bytes = in.readAllBytes();
+            Assertions.assertTrue(bytes.length > 0);
+        }
+    }
+
+    @Test
+    void testBrandingLogoExists() throws IOException {
+        try (InputStream in = getClass().getResourceAsStream("/META-INF/branding/logo.png")) {
             byte[] bytes = in.readAllBytes();
             Assertions.assertTrue(bytes.length > 0);
         }
