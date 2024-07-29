@@ -22,9 +22,11 @@ public class GenericException extends RuntimeException {
     }
 
     @Override
-    // replace term in {} in message with messageArguments
     public String getMessage() {
         String message = errorResponse.getMessage();
+        if (messageArguments == null) {
+            return errorResponse.getHttpStatus().getReasonPhrase();
+        }
         for (Map.Entry<String, Object> entry : messageArguments.entrySet()) {
             message = message.replace("{" + entry.getKey() + "}", entry.getValue().toString());
         }
