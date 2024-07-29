@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -19,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.dime.exceptions.GenericError;
+import com.dime.exceptions.GenericException;
 import com.dime.extensions.wordsapi.WordsApiService;
 
 import jakarta.inject.Inject;
@@ -145,11 +148,15 @@ class TermServiceTest {
     @Test
     void testGetTerm_WordsApiServiceException() {
         when(termRepository.findByWord("example")).thenReturn(null);
-        when(wordsApiService.findByWord("example")).thenThrow(new RuntimeException("API error"));
+        when(wordsApiService.findByWord("example"))
+                .thenThrow(GenericError.FAILED_DEPENDENCY.exWithArguments(Map.of("code", 500)));
+        try {
+            termService.getTerm("example");
+        } catch (Exception e) {
+            assertEquals("Failed during using dependency, [code : 500]", e.getMessage());
+            assertTrue(e instanceof GenericException);
+        }
 
-        Optional<Term> result = termService.getTerm("example");
-
-        assertFalse(result.isPresent());
         verify(termRepository, times(1)).findByWord("example");
         verify(wordsApiService, times(1)).findByWord("example");
         verify(termRepository, times(0)).persist(term);

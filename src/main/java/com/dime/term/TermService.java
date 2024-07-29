@@ -45,13 +45,6 @@ public class TermService {
     }
 
     /*
-     * This method returns a term by its word
-     */
-    public Optional<Term> findByWord(String word) {
-        return Optional.ofNullable(termRepository.findByWord(word));
-    }
-
-    /*
      * This method is annotated with @Transactional to ensure that the transaction
      * is open during the entire method execution. This is necessary because the
      * method calls two different repositories. The method first checks if the term
@@ -63,16 +56,11 @@ public class TermService {
     @Transactional
     public Optional<Term> getTerm(String word) {
         Term term = null;
-        try {
-            term = termRepository.findByWord(word);
-            if (term != null) {
-                return Optional.of(term);
-            }
-            term = wordsApiService.findByWord(word);
-        } catch (Exception e) {
-            Log.warn("Error getting term from wordsApiService for word [" + word + "] : " + e.getMessage());
-            return Optional.ofNullable(term);
+        term = termRepository.findByWord(word);
+        if (term != null) {
+            return Optional.of(term);
         }
+        term = wordsApiService.findByWord(word);
         if (term == null) {
             Log.warn("Error Term not found in wordsApiService : [" + word + "]");
             return Optional.ofNullable(term);
