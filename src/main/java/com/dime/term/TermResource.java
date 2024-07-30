@@ -50,8 +50,7 @@ public class TermResource {
     public HalEntityWrapper<TermRecord> getTermByWord(@PathParam("word") String word) {
         String wordLower = word.toLowerCase();
         Term entity = termService.getTerm(wordLower).get();
-        HalEntityWrapper<TermRecord> halEntity = halService.toHalWrapper(termMapper.toRecord(entity));
-        return halEntity;
+        return halService.toHalWrapper(termMapper.toRecord(entity));
     }
 
     @GET
@@ -63,8 +62,7 @@ public class TermResource {
     public HalEntityWrapper<TermRecord> getTermById(@PathParam("id") int id) {
         Term entity = termService.findById(Long.valueOf(id))
                 .orElseThrow(() -> GenericError.TERM_NOT_FOUND.exWithArguments(Map.of("id", id)));
-        HalEntityWrapper<TermRecord> halEntity = halService.toHalWrapper(termMapper.toRecord(entity));
-        return halEntity;
+        return halService.toHalWrapper(termMapper.toRecord(entity));
     }
 
     /*
