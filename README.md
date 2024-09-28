@@ -22,6 +22,7 @@ WORDSAPI_KEY=your key
 #DB Config
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
+DB_name=your_db_name
 
 # Other configuration
 DEBUG=true
@@ -30,6 +31,10 @@ DEBUG=true
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
+
+``` Example shell script to create a postgres container
+docker run --name tadiag-postgres -e POSTGRES_USER=quarkus -e POSTGRES_PASSWORD=quarkus -e POSTGRES_DB=tadiag -p 5432:5432 -d postgres
+```
 
 ```shell script
 ./mvnw compile quarkus:dev

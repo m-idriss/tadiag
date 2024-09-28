@@ -8,13 +8,11 @@ public class GenericException extends RuntimeException {
     private final transient GenericErrorResponse errorResponse;
     private final transient Map<String, Object> messageArguments;
 
-    // Constructeur qui initialise tous les champs
     public GenericException(GenericErrorResponse errorResponse, Map<String, Object> messageArguments) {
         this.errorResponse = errorResponse;
         this.messageArguments = messageArguments;
     }
 
-    // Getters pour les champs
     public GenericErrorResponse getErrorResponse() {
         return errorResponse;
     }
@@ -24,9 +22,11 @@ public class GenericException extends RuntimeException {
     }
 
     @Override
-    // replace term in {} in message with messageArguments
     public String getMessage() {
         String message = errorResponse.getMessage();
+        if (messageArguments == null) {
+            return errorResponse.getHttpStatus().getReasonPhrase();
+        }
         for (Map.Entry<String, Object> entry : messageArguments.entrySet()) {
             message = message.replace("{" + entry.getKey() + "}", entry.getValue().toString());
         }
