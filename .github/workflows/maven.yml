@@ -64,7 +64,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    environment: production
+    environment: staging
+    env:
+      PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
+      PI_USERNAME: ${{ secrets.PI_USERNAME }}
 
     steps:
       - name: Checkout Code
