@@ -76,6 +76,11 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+      - name: Debug Environment Variables
+        run: |
+          echo "WORDSAPI_KEY: $WORDSAPI_KEY"
+          echo "GITHUB_TOKEN: $GITHUB_TOKEN"
+          
       - name: SSH to Raspberry Pi and pull changes
         id: ssh_pull
         uses: appleboy/ssh-action@master
