@@ -32,7 +32,6 @@ jobs:
 
       - name: Run Docker Container for Testing
         run: docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
-        detach: true
 
       - name: Test Application Availability
         run: |
