@@ -56,20 +56,9 @@ jobs:
         run: |
           echo "WORDSAPI_KEY: $WORDSAPI_KEY"
           echo "GITHUB_TOKEN: $GITHUB_TOKEN"
-          
-      - name: Build Quarkus App with Maven
-        run: ./mvnw package
-
-      - name: Build Docker Image
-        run: docker build -f src/main/docker/Dockerfile.jvm -t quarkus/tadiag-jvm .
-
-      - name: Run Docker Container for Testing
-        run: docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
-
-      - name: Test Application Availability
-        run: |
-          sleep 10 # Give some time for the container to be fully up
-          curl --fail http://localhost:8083 || exit 1 # Fail the job if the app is not responding
+      
+      - name: Build and Test with Maven
+        run: mvn verify --file pom.xml -Dspring.profiles.active=staging
 
   deploy:
     needs: build
@@ -113,8 +102,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd dev/projects/tadiag
-            docker compose down
-            docker compose --env-file=.env.prod up --build -d
+             ./mvnw packag
+            docker build -f src/main/docker/Dockerfile.jvm -t quarkus/tadiag-jvm .
+            docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
         continue-on-error: true
 
       - name: Check if Docker Compose restart was successful
