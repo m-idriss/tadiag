@@ -1,3 +1,0 @@
-wordsapi:
-  host:
-    key: ${WORDSAPI_KEY}
