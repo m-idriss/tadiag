@@ -57,8 +57,8 @@ jobs:
           echo "WORDSAPI_KEY: $WORDSAPI_KEY"
           echo "GITHUB_TOKEN: $GITHUB_TOKEN"
       
-      - name: Build and Test with Maven with staging environment
-        run: mvn verify --file pom.xml -Pstaging
+      - name: Build and Test with Maven
+        run: mvn verify
 
   deploy:
     needs: build
