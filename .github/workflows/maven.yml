@@ -52,6 +52,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Debug Environment Variables
+        run: |
+          echo "WORDSAPI_KEY: $WORDSAPI_KEY"
+          echo "GITHUB_TOKEN: $GITHUB_TOKEN"
+          
       - name: Build Quarkus App with Maven
         run: ./mvnw package
 
