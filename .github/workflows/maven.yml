@@ -101,7 +101,7 @@ jobs:
         if: steps.ssh_pull.outcome == 'failure'
         run: exit 1 # Fail the workflow if git pull failed
 
-      - name: SSH to Raspberry Pi and restart Docker Compose
+      - name: SSH to Raspberry Pi and build Docker image
         id: ssh_compose
         uses: appleboy/ssh-action@master
         with:
@@ -110,7 +110,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd dev/projects/tadiag
-             ./mvnw packag
+             ./mvnw package
             docker build -f src/main/docker/Dockerfile.jvm -t quarkus/tadiag-jvm .
             docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
         continue-on-error: true
