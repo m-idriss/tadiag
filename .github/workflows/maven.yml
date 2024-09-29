@@ -60,11 +60,27 @@ jobs:
       - name: Build and Test with Maven
         run: mvn verify
 
+      - name: Test Reporter tadiag
+        uses: dorny/test-reporter@v1.8.0
+        with:
+          name: test-results-taiag
+          path: diag-app/target/surefire-reports/*.xml
+          path-replace-backslashes: false
+          reporter: java-junit
+          list-suites: all
+          list-tests: all
+          max-annotations: 10
+          fail-on-error: true
+          fail-on-empty: true
+          only-summary: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: staging
+    
     env:
       PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
       PI_USERNAME: ${{ secrets.PI_USERNAME }}
