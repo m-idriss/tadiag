@@ -1,0 +1,15 @@
+#version: '3.8'
+
+services:
+  tadiag:
+    container_name: tadiag
+    image: dime/tadiag:latest
+    ports:
+      - "8083:8080"
+    environment:
+      - DB_HOST=docker.for.mac.localhost
+      - POSTGRES_DB=diag
+      - POSTGRES_USER=diag
+      - POSTGRES_PASSWORD=diag
+      - WORDSAPI_KEY=${WORDSAPI_KEY}
+      - WORDSAPI_URL=https:${WORDSAPI_URL}

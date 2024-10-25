@@ -10,7 +10,7 @@ on:
     # Schedule: Run every day at 7:00 AM
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     environment: staging
     env:
@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         language: ["java-kotlin"]
-        
+   
     steps:
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
@@ -60,11 +60,25 @@ jobs:
       - name: Build and Test with Maven
         run: mvn verify
 
-  deploy:
-    needs: build
+      - name: Test Reporter for Quarkus
+        uses: dorny/test-reporter@v1.8.0
+        with:
+          name: test-results-tadiag
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          max-annotations: 10
+          fail-on-error: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-to-production:
+    needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    environment: production
+    environment: staging
+    
+    env:
+      PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
+      PI_USERNAME: ${{ secrets.PI_USERNAME }}
 
     steps:
       - name: Checkout Code
@@ -81,7 +95,7 @@ jobs:
           echo "PUBLIC_IP: $PUBLIC_IP"
           echo "PI_USERNAME: $PI_USERNAME"
 
-      - name: SSH to Raspberry Pi and pull changes
+      - name: SSH to Raspberry Pi and Deploy Changes
         id: ssh_pull
         uses: appleboy/ssh-action@master
         with:
@@ -89,6 +103,7 @@ jobs:
           username: ${{ secrets.PI_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            export JAVA_HOME=/usr/lib/jvm/temurin-21
             cd dev/projects/tadiag
             git reset --hard origin/master
             git pull origin master
@@ -98,8 +113,8 @@ jobs:
         if: steps.ssh_pull.outcome == 'failure'
         run: exit 1 # Fail the workflow if git pull failed
 
-      - name: SSH to Raspberry Pi and restart Docker Compose
-        id: ssh_compose
+      - name: SSH to Raspberry Pi and build Docker image
+        id: ssh_build
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUBLIC_IP }}
@@ -107,11 +122,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd dev/projects/tadiag
-             ./mvnw packag
+             ./mvnw package --file pom.xml
             docker build -f src/main/docker/Dockerfile.jvm -t quarkus/tadiag-jvm .
             docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
         continue-on-error: true
 
       - name: Check if Docker Compose restart was successful
-        if: steps.ssh_compose.outcome == 'failure'
+        if: steps.ssh_build.outcome == 'failure'
         run: exit 1 # Fail the workflow if Docker Compose restart failed
