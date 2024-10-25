@@ -117,7 +117,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd dev/projects/tadiag
-             ./mvnw package
+             ./mvnw package --file pom.xml
             docker build -f src/main/docker/Dockerfile.jvm -t quarkus/tadiag-jvm .
             docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
         continue-on-error: true
