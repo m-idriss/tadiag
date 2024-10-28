@@ -61,7 +61,7 @@ jobs:
         run: mvn verify
 
       - name: Test Reporter for Quarkus
-        uses: dorny/test-reporter@v1.8.0
+        uses: dorny/test-reporter@v1.9.1
         with:
           name: test-results-tadiag
           path: target/surefire-reports/*.xml
