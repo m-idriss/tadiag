@@ -123,8 +123,8 @@ jobs:
           script: |
             cd dev/projects/tadiag
              ./mvnw package --file pom.xml
-            docker build -f src/main/docker/Dockerfile.jvm -t quarkus/tadiag-jvm .
-            docker run --name tadiag --env-file .env.prod -i --rm -p 8083:8080 quarkus/tadiag-jvm
+            docker compose down
+            docker compose --env-file=.env.prod up --build -d
         continue-on-error: true
 
       - name: Check if Docker Compose restart was successful
