@@ -61,7 +61,7 @@ jobs:
         run: mvn verify
 
       - name: Test Reporter for Quarkus
-        uses: dorny/test-reporter@v1.8.0
+        uses: dorny/test-reporter@v1.9.1
         with:
           name: test-results-tadiag
           path: target/surefire-reports/*.xml
@@ -84,6 +84,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          
       - name: Set SSH key permissions
         run: |
           mkdir -p ~/.ssh
