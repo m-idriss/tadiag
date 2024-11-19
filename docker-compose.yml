@@ -4,6 +4,9 @@ services:
   tadiag:
     container_name: tadiag
     image: dime/tadiag:latest
+    build:
+      context: ./
+      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}
     ports:
       - "8083:8080"
     environment:
