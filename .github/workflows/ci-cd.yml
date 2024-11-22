@@ -66,13 +66,19 @@ jobs:
         run: mvn clean verify
 
       # Step 5: Build and push the Docker image
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image using Jib
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn clean package -DskipTests -Dquarkus.container-image.push=true
+
+      # Step 6: Manually re-tag and push the image
+      - name: Re-tag and Push Image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn clean package -DskipTests -Dquarkus.container-image.push=true
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker push ghcr.io/${{ github.repository }}:latest
+          docker pull ghcr.io/m-idriss/tadiag:latest
+          docker tag ghcr.io/m-idriss/tadiag:latest ghcr.io/m-idriss/tadiag:latest
+          docker push ghcr.io/m-idriss/tadiag:latest
 
   deploy-to-pi:
     needs: build-and-test
