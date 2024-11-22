@@ -69,6 +69,7 @@ jobs:
           max-annotations: 10
           fail-on-error: true
           token: ${{ secrets.GITHUB_TOKEN }}
+          
   create-release:
     needs: deploy-to-production
     runs-on: ubuntu-latest
