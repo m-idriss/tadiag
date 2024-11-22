@@ -55,19 +55,35 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
-
+      - name: cache ~/.m2
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
       # Step 4: Build and run tests with Maven
       - name: Build and Test
         run: mvn clean verify
 
       # Step 5: Build and push the Docker image
-      - name: Build and Push Docker Image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mvn clean package -DskipTests -Dquarkus.container-image.push=true -Dquarkus.jib.platforms=linux/amd64,linux/arm64
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker push ghcr.io/${{ github.repository }}:latest
+      - name: mvn package -DskipTests -Dquarkus.container-image.push=true latest
+        if: github.ref == 'refs/heads/master'
+        run: >-
+          $MVN package -DskipTests
+          -Dquarkus.container-image.push=true
+          -Dquarkus.container-image.username=${{ github.actor }}
+          -Dquarkus.container-image.password=${{ secrets.GITHUB_TOKEN }}
+          -Dquarkus.container-image.image=ghcr.io/${{ github.repository }}:latest
+          '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA
+      - name: mvn package -DskipTests -Dquarkus.container-image.push=true snapshot
+        if: github.ref != 'refs/heads/master'
+        run: >-
+          $MVN package -DskipTests
+          -Dquarkus.container-image.push=true
+          -Dquarkus.container-image.username=${{ github.actor }}
+          -Dquarkus.container-image.password=${{ secrets.GITHUB_TOKEN }}
+          -Dquarkus.container-image.image=ghcr.io/${{ github.repository }}:snapshot
+          '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA
 
   deploy-to-pi:
     needs: build-and-test
