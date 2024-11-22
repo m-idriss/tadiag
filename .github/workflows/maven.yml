@@ -69,7 +69,30 @@ jobs:
           max-annotations: 10
           fail-on-error: true
           token: ${{ secrets.GITHUB_TOKEN }}
-
+  create-release:
+    needs: deploy-to-production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+  
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+  
+      - name: Create or Update Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: latest
+          release_name: Release for Master
+          body: |
+            Automated Release for Master Branch:
+            - Build and tests passed successfully.
+            - Deployed to production environment.
+          draft: false
+          prerelease: false
+          
   deploy-to-production:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -128,27 +151,3 @@ jobs:
       - name: Check if Docker Compose restart was successful
         if: steps.ssh_build.outcome == 'failure'
         run: exit 1 # Fail the workflow if Docker Compose restart failed
-        
-  create-release:
-    needs: deploy-to-production
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Create or Update Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: latest
-          release_name: Release for Master
-          body: |
-            Automated Release for Master Branch:
-            - Build and tests passed successfully.
-            - Deployed to production environment.
-          draft: false
-          prerelease: false
