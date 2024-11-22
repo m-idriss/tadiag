@@ -65,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn clean package -DskipTests -Dquarkus.container-image.push=true
+          mvn clean package -DskipTests -Dquarkus.container-image.push=true -Dquarkus.jib.platforms=linux/amd64,linux/arm64
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker push ghcr.io/${{ github.repository }}:latest
 
