@@ -76,9 +76,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          docker pull ghcr.io/m-idriss/tadiag:latest
-          docker tag ghcr.io/m-idriss/tadiag:latest ghcr.io/m-idriss/tadiag:latest
-          docker push ghcr.io/m-idriss/tadiag:latest
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker pull ghcr.io/${{ github.repository }}:latest
+          docker tag ghcr.io/${{ github.repository }}:latest ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
 
   deploy-to-pi:
     needs: build-and-test
