@@ -100,8 +100,8 @@ jobs:
 
       - name: Debug Environment Variables
         run: |
-          echo "PUBLIC_IP: $PUBLIC_IP"
-          echo "PI_USERNAME: $PI_USERNAME"
+          echo "PUBLIC_IP: ${{ secrets.PUBLIC_IP }}"
+          echo "PI_USERNAME: ${{ secrets.PI_USERNAME }}"
 
       # Step 3: Deploy to the Raspberry Pi
       - name: Deploy to Raspberry Pi
