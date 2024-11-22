@@ -65,8 +65,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:latest .
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          mvn clean package -DskipTests -Dquarkus.container-image.push=true
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker push ghcr.io/${{ github.repository }}:latest
 
   deploy-to-pi:
