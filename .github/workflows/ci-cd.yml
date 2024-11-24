@@ -114,8 +114,8 @@ jobs:
           script: |
             docker login ghcr.io -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/${{ github.repository }}:latest
-            docker stop quarkus-app || true
-            docker rm quarkus-app || true
+            docker stop tadiag-quarkus-app || true
+            docker rm tadiag-quarkus-app || true
             docker run -d \
               --name tadiag-quarkus-app \
               -p 8080:8080 \
