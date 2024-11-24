@@ -119,5 +119,5 @@ jobs:
             docker run -d \
               --name quarkus-app \
               -p 8080:8080 \
-              -e DB_HOST=docker.for.mac.localhost \
+              -e DB_HOST=${{ secrets.PUBLIC_IP }} \
               ghcr.io/${{ github.repository }}:latest
