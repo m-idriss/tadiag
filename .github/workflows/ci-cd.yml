@@ -116,4 +116,8 @@ jobs:
             docker pull ghcr.io/${{ github.repository }}:latest
             docker stop quarkus-app || true
             docker rm quarkus-app || true
-            docker run -d --name quarkus-app -p 8080:8080 ghcr.io/${{ github.repository }}:latest
+            docker run -d \
+              --name quarkus-app \
+              -p 8080:8080 \
+              -e DB_HOST=docker.for.mac.localhost \
+              ghcr.io/${{ github.repository }}:latest
