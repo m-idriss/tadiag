@@ -119,4 +119,8 @@ jobs:
               -p 8080:8080 \
               -e DB_HOST=${{ secrets.PUBLIC_IP }} \
               -e WORDSAPI_KEY=${{ secrets.WORDSAPI_KEY }} \
-              ghcr.io/${{ github.repository }}:latest
+              --health-cmd="curl --fail http://localhost:8080/q/health || exit 1" \
+              --health-interval=30s \
+              --health-timeout=10s \
+              --health-retries=3 \
+              --health-start-period=30s \
