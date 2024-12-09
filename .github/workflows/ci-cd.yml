@@ -16,6 +16,21 @@ jobs:
       WORDSAPI_KEY: ${{ secrets.WORDSAPI_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD:  ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     strategy:
       fail-fast: false
       matrix:
@@ -109,4 +124,3 @@ jobs:
               --health-timeout=10s \
               --health-retries=3 \
               --health-start-period=30s \
-              ghcr.io/${{ github.repository }}:latest
